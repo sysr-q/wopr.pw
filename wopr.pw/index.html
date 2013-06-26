@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        LOGON: HTML
+
+        IDENTIFICATION NOT RECOGNISED BY SYSTEM
+        --CONNECTION TERMINATED--
+    -->
+    <meta charset="utf-8" />
+    <title>War Operation Plan Response</title>
+    <link rel="stylesheet" href="960.css"/>
+    <link rel="stylesheet" href="wopr.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+    <script src="segment-display.js" type="text/javascript"></script>
+    <script>
+    $(function () {
+        function replaceAt(s, index, char) {
+            var a = s.split("");
+            a[index] = char;
+            return a.join("");
+        }
+
+        var LAUNCHCODE = "CPE1704TKS";
+
+        var display = new SegmentDisplay("display");
+        display.pattern         = "##########";
+        display.displayAngle    = 6;
+        display.digitHeight     = 20;
+        display.digitWidth      = 14;
+        display.digitDistance   = 2.5;
+        display.segmentWidth    = 2;
+        display.segmentDistance = 0.3;
+        display.segmentCount    = 14;
+        display.cornerType      = 3;
+        display.colorOn         = "#ff2c0f";
+        display.colorOff        = "#631605";
+        display.draw();
+        display.setValue(null);
+
+        function rnds(g) {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 10; i++) {
+                if (g.charAt(i) == "#") {
+                    text += possible.charAt(Math.floor(Math.random() * possible.length));
+                } else {
+                    text += LAUNCHCODE.charAt(i);
+                }
+            }
+            return text;
+        }
+
+        window.wopr_cur_code = "##########";
+        window.wopr_blink_count = 0;
+        window.wopr_blink_max = 35;
+
+        function reset() {
+            window.wopr_cur_code = "##########";
+            window.wopr_blink_count = 0;
+            window.wopr_blink_max = 35;            
+        }
+
+        function animate() {
+            if (window.wopr_cur_code == "..........") {
+                // cracked
+                if (window.wopr_blink_count >= window.wopr_blink_max) {
+                    return;
+                } else {
+                    window.wopr_blink_count++;
+                }
+                if (display.value == LAUNCHCODE) {
+                    display.setValue(null);
+                } else {
+                    display.setValue(LAUNCHCODE);
+                }
+            } else {
+                // not cracked
+                if (Math.floor(Math.random() * 100) > 95) {
+                    for (var i = 0; i < 10; i++) {
+                        var spot = Math.floor(Math.random() * 10);
+                        if (window.wopr_cur_code.charAt(spot) == "#") {
+                            window.wopr_cur_code = replaceAt(window.wopr_cur_code, spot, ".");
+                            break;
+                        }
+                    }
+                }
+                display.setValue(rnds(window.wopr_cur_code));
+            }
+        }
+        window.setInterval(animate, 100);
+    });
+    </script>
+</head>
+<body>
+    <content>
+    <div class="container_12 content">
+        <div class="push_2 grid_8">
+            <canvas id="display" width="600" height="100">WOPR can't function without a canvas element. Upgrade your browser or enable JavaScript.</canvas>
+        </div>
+    </div>
+    </content>
+</body>
+</html>
