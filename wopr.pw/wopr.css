@@ -1,9 +1,16 @@
 body {
     background-color: #5e5e5e;
+    margin-top: 20px;
 }
 
 #display {
     background-color: rgba(0, 0, 0, 0.75);
     padding: 0px 10px;
     border-radius: 3px;
+}
+
+#reset {
+    position: absolute;
+    top: 0px;
+    right: 0px;
 }

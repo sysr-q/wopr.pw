@@ -60,11 +60,15 @@
             window.wopr_blink_count = 0;
             window.wopr_blink_max = 35;            
         }
+        $("#reset").click(reset);
 
         function animate() {
             if (window.wopr_cur_code == "..........") {
                 // cracked
                 if (window.wopr_blink_count >= window.wopr_blink_max) {
+                    if (display.value != LAUNCHCODE) {
+                        display.setValue(LAUNCHCODE);
+                    }
                     return;
                 } else {
                     window.wopr_blink_count++;
@@ -93,12 +97,15 @@
     </script>
 </head>
 <body>
-    <content>
+    <div id="wrap">
     <div class="container_12 content">
-        <div class="push_2 grid_8">
-            <canvas id="display" width="600" height="100">WOPR can't function without a canvas element. Upgrade your browser or enable JavaScript.</canvas>
+        <div class="push_2 grid_8" id="inner">
+            <canvas id="display" width="600" height="100">
+                WOPR can't function without a canvas element. Upgrade your browser or enable JavaScript.
+            </canvas>
         </div>
+        <button id="reset">RESET</button>
     </div>
-    </content>
+    </div>
 </body>
 </html>
