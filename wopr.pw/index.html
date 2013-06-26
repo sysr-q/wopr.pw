@@ -53,18 +53,31 @@
             return text;
         }
 
-        $.wopr.cur_code = "##########";
+        $.wopr.setValue = function (s) {
+            display.setValue(s);
+            $.cookie("wopr-current", $.wopr.cur_code);
+        }
+
+        $.wopr.CRACKED_CODE = "..........";
+        $.wopr.UNCRACKED_CODE = "##########";
+
+        $.wopr.cur_code = $.wopr.UNCRACKED_CODE;
         $.wopr.blink_count = 0;
         $.wopr.blink_max = 30;
 
+        if ($.cookie("wopr-current")) {
+            $.wopr.cur_code = $.cookie("wopr-current");
+        }
+
         if ($.cookie("wopr-cracked")) {
-            $.wopr.cur_code = "..........";
-            $.wopr.blink_count = 100;
+            $.wopr.cur_code = $.wopr.CRACKED_CODE;
+            $.wopr.blink_count = $.wopr.blink_max;
         }
 
         function reset() {
-            $.wopr.cur_code = "##########";
+            $.wopr.cur_code = $.wopr.UNCRACKED_CODE;
             $.wopr.blink_count = 0;
+            $.cookie("wopr-current", null);
             $.cookie("wopr-cracked", null);
         }
         $("#reset").click(reset);
@@ -75,16 +88,16 @@
                 $.cookie("wopr-cracked", true);
                 if ($.wopr.blink_count >= $.wopr.blink_max) {
                     if (display.value != $.wopr.LAUNCHCODE) {
-                        display.setValue($.wopr.LAUNCHCODE);
+                        $.wopr.setValue($.wopr.LAUNCHCODE);
                     }
                     return;
                 } else {
                     $.wopr.blink_count++;
                 }
                 if (display.value == $.wopr.LAUNCHCODE) {
-                    display.setValue(null);
+                    $.wopr.setValue(null);
                 } else {
-                    display.setValue($.wopr.LAUNCHCODE);
+                    $.wopr.setValue($.wopr.LAUNCHCODE);
                 }
             } else {
                 // not cracked
@@ -97,7 +110,7 @@
                         }
                     }
                 }
-                display.setValue($.wopr.rnds($.wopr.cur_code));
+                $.wopr.setValue($.wopr.rnds($.wopr.cur_code));
             }
         }
         window.setInterval(animate, 100);
