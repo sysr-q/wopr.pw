@@ -16,13 +16,14 @@
     <script src="segment-display.js" type="text/javascript"></script>
     <script>
     $(function () {
-        function replaceAt(s, index, char) {
+        $.wopr = {};
+        $.wopr.LAUNCHCODE = "CPE1704TKS";
+        $.wopr.replaceAt = function(s, index, char) {
             var a = s.split("");
             a[index] = char;
             return a.join("");
         }
 
-        var LAUNCHCODE = "CPE1704TKS";
 
         var display = new SegmentDisplay("display");
         display.pattern         = "##########";
@@ -39,65 +40,64 @@
         display.draw();
         display.setValue(null);
 
-        function rnds(g) {
+        $.wopr.rnds = function(g) {
             var text = "";
             var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             for (var i = 0; i < 10; i++) {
                 if (g.charAt(i) == "#") {
                     text += possible.charAt(Math.floor(Math.random() * possible.length));
                 } else {
-                    text += LAUNCHCODE.charAt(i);
+                    text += $.wopr.LAUNCHCODE.charAt(i);
                 }
             }
             return text;
         }
 
-        window.wopr_cur_code = "##########";
-        window.wopr_blink_count = 0;
-        window.wopr_blink_max = 35;
+        $.wopr.cur_code = "##########";
+        $.wopr.blink_count = 0;
+        $.wopr.blink_max = 30;
 
         if ($.cookie("wopr-cracked")) {
-            window.wopr_cur_code = "..........";
-            window.wopr_blink_count = 100;
+            $.wopr.cur_code = "..........";
+            $.wopr.blink_count = 100;
         }
 
         function reset() {
-            window.wopr_cur_code = "##########";
-            window.wopr_blink_count = 0;
-            window.wopr_blink_max = 35;
+            $.wopr.cur_code = "##########";
+            $.wopr.blink_count = 0;
             $.cookie("wopr-cracked", null);
         }
         $("#reset").click(reset);
 
         function animate() {
-            if (window.wopr_cur_code == "..........") {
+            if ($.wopr.cur_code == "..........") {
                 // cracked
                 $.cookie("wopr-cracked", true);
-                if (window.wopr_blink_count >= window.wopr_blink_max) {
-                    if (display.value != LAUNCHCODE) {
-                        display.setValue(LAUNCHCODE);
+                if ($.wopr.blink_count >= $.wopr.blink_max) {
+                    if (display.value != $.wopr.LAUNCHCODE) {
+                        display.setValue($.wopr.LAUNCHCODE);
                     }
                     return;
                 } else {
-                    window.wopr_blink_count++;
+                    $.wopr.blink_count++;
                 }
-                if (display.value == LAUNCHCODE) {
+                if (display.value == $.wopr.LAUNCHCODE) {
                     display.setValue(null);
                 } else {
-                    display.setValue(LAUNCHCODE);
+                    display.setValue($.wopr.LAUNCHCODE);
                 }
             } else {
                 // not cracked
-                if (Math.floor(Math.random() * 1000) > 950) {
-                    for (var i = 0; i < 10; i++) {
+                if (Math.floor(Math.random() * 1000) > 985) {
+                    for (var i = 0; i < 100; i++) {
                         var spot = Math.floor(Math.random() * 10);
-                        if (window.wopr_cur_code.charAt(spot) == "#") {
-                            window.wopr_cur_code = replaceAt(window.wopr_cur_code, spot, ".");
+                        if ($.wopr.cur_code.charAt(spot) == "#") {
+                            $.wopr.cur_code = $.wopr.replaceAt($.wopr.cur_code, spot, ".");
                             break;
                         }
                     }
                 }
-                display.setValue(rnds(window.wopr_cur_code));
+                display.setValue($.wopr.rnds($.wopr.cur_code));
             }
         }
         window.setInterval(animate, 100);
